@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rakshitha | Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --accent-color: #6366f1;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --glass: rgba(255, 255, 255, 0.8);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.05);
+        }
+       
+        /* --- Global Animation Base --- */
+section { 
+    padding: 120px 10%; 
+    min-height: 90vh; 
+    opacity: 0; 
+    transform: translateY(50px); 
+    transition: all 1s cubic-bezier(0.22, 1, 0.36, 1); 
+}
+
+section.visible { 
+    opacity: 1; 
+    transform: translateY(0); 
+}
+
+/* --- Staggered Entrance for Grids --- */
+.skills-grid > *, .project-grid > *, .cert-card {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+    transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+section.visible .skills-grid > *, 
+section.visible .project-grid > *,
+section.visible .cert-card {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+}
+
+/* Stagger Delays (Creates the "Wave" effect) */
+section.visible div > *:nth-child(1) { transition-delay: 0.1s; }
+section.visible div > *:nth-child(2) { transition-delay: 0.2s; }
+section.visible div > *:nth-child(3) { transition-delay: 0.3s; }
+section.visible div > *:nth-child(4) { transition-delay: 0.4s; }
+
+/* --- Special Hover Effects --- */
+.project-card, .skill-node, .cert-card {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+    transform: translateY(-15px) scale(1.02) !important;
+    box-shadow: 0 30px 60px rgba(99, 102, 241, 0.15);
+}
+
+.skill-node:hover {
+    transform: translateY(-10px) rotate(3deg) !important;
+}
+
+/* Floating Animation for Hero Image */
+.profile-blob {
+    animation: blob-animate 8s ease-in-out infinite, floating 4s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+}
+
+/* Button Pulse */
+.view-cert-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.view-cert-btn:hover {
+    letter-spacing: 1px;
+    box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+}
+        * { margin: 0; padding: 0; box-sizing: border-box; cursor: none; scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            overflow-x: hidden;
+        }
+        #particleCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Sits behind everything */
+    background: radial-gradient(circle at center, #ffffff 0%, #f8fafc 100%);
+    pointer-events: none;
+}
+        /* Custom Cursor */
+        #cursor {
+            width: 12px; height: 12px; background: var(--accent-color);
+            border-radius: 50%; position: fixed; pointer-events: none;
+            z-index: 9999; transition: transform 0.15s ease-out;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed; top: 0; width: 100%; padding: 20px 8%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: var(--glass); backdrop-filter: blur(15px); z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .nav-links { display: flex; list-style: none; gap: 25px; }
+        .nav-links a { text-decoration: none; color: var(--text-main); font-weight: 600; font-size: 0.85rem; }
+
+        /* General Section Styling */
+        section { padding: 120px 10%; min-height: 90vh; opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); }
+        section.visible { opacity: 1; transform: translateY(0); }
+        .section-title { font-size: 2.2rem; margin-bottom: 40px; font-weight: 800; color: var(--accent-color); text-align: left; }
+
+        /* HOME SECTION */
+        #home { display: flex; align-items: center; justify-content: space-between; gap: 50px; }
+        .profile-blob {
+            width: 300px; height: 300px;
+            background: linear-gradient(45deg, var(--accent-color), #a5b4fc);
+            border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+            animation: blob-animate 8s ease-in-out infinite;
+            overflow: hidden; border: 8px solid white; box-shadow: var(--shadow);
+        }
+        @keyframes blob-animate {
+            0%, 100% { border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%; }
+            50% { border-radius: 30% 60% 70% 40% / 50% 60% 30% 60%; }
+        }
+
+        /* PROJECT SECTION (FIXED) */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .project-card {
+            background: var(--card-bg);
+            border-radius: 24px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(0,0,0,0.02);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.1);
+        }
+
+        .project-category {
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: var(--accent-color);
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .project-card h3 { margin-bottom: 15px; font-size: 1.4rem; }
+        .project-card p { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px; }
+
+        .tech-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+        .tag {
+            background: #f1f5f9;
+            padding: 5px 12px;
+            border-radius: 8px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        /* Updated Styles for the Category Layout */
+        .skills-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+        }
+
+        .skill-category {
+            width: 100%;
+        }
+
+        .category-title {
+            font-size: 1.4rem;
+            color: var(--text-main);
+            margin-bottom: 20px;
+            padding-left: 10px;
+            border-left: 4px solid var(--accent-color);
+            font-weight: 700;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 20px;
+        }
+
+        .skill-node {
+            background: white;
+            padding: 20px;
+            border-radius: 18px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0,0,0,0.02);
+        }
+
+        .skill-node h3 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .skill-node p {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .skill-node:hover {
+            transform: translateY(-5px);
+            background: var(--accent-color);
+        }
+
+        .skill-node:hover p {
+            color: white;
+        }
+    
+        /* CERTIFICATIONS */
+        .cert-timeline { position: relative; padding-left: 30px; border-left: 3px solid #e2e8f0; }
+        .cert-card {
+            background: white; padding: 25px; border-radius: 18px;
+            margin-bottom: 25px; box-shadow: var(--shadow);
+        }
+
+        /* CONTACT */
+        .contact-box { text-align: center; background: white; padding: 50px; border-radius: 30px; box-shadow: var(--shadow); }
+
+        @media (max-width: 768px) {
+            #home { flex-direction: column-reverse; text-align: center; }
+            .nav-links { display: none; }
+        }
+        
+    /* Styling the button specifically */
+    .view-cert-btn {
+        display: inline-block;
+        margin-top: 15px;
+        padding: 10px 20px;
+        background: var(--accent-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+    }
+
+    </style>
+</head>
+<body>
+
+    <div id="cursor"></div>
+     <canvas id="particleCanvas"></canvas>
+    <nav>
+        <div style="font-weight: 800; letter-spacing: 1px;">UH</div>
+        <ul class="nav-links">
+            <li><a href="#home">Home</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#skills">Skills</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#certs">Certifications</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="home">
+        <div class="hero-text">
+            <h1 style="font-size: 3.5rem; color: rgba(16, 180, 225, 0.748);font-family:sans-serif; margin-bottom: 10px;">Umme Hani</h1>
+            <h2 style="color: var(--accent-color); font-weight: 600; margin-bottom: 20px;">Creative Developer & Design Thinker.</h2>
+            <p style="color: var(--text-muted); max-width: 500px; margin-bottom: 30px;">
+            Building seamless digital experiences through clean code and modern aesthetics. 
+            Based in India, working globally.
+            </p> 
+            <a href="#projects" style="background: var(--accent-color); color: white; padding: 15px 30px; border-radius: 10px; text-decoration: none; font-weight: bold;">View My Work</a>
+        </div>
+        <div class="profile-blob">
+            <img src="D:\han\images\mee.png.jpeg" alt="Profile" style="width:100%; height:100%; object-fit:cover;">
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 class="section-title">About Me</h2>
+        <div style="background: white; padding: 40px; border-radius: 24px; box-shadow: var(--shadow);">
+            <p style="line-height: 1.8; font-size: 1.1rem;">
+            Driven by a passion for building seamless digital experiences,
+            I have spent my academic career mastering the art of web development and design.
+             My internship at iStudio Technologies, 
+            I spearheaded the UI/UX process for a Grocery E-commerce platform, translating complex user requirements into functional, high-fidelity prototypes. 
+            <br><br>From configuring Flutter development environments to deploying full-scale applications on Netlify, I thrive on solving technical challenges.
+            I am now seeking a professional role where I can apply my skills in React.js, Node.js, and Figma to create impactful software solutions </p><br>
+        </div>
+    </section>
+
+    <section id="skills">
+        <h2 class="section-title">Technical Expertise</h2>
+        
+        <div class="skills-wrapper">
+            <div class="skill-category">
+                <h3 class="category-title">Frontend Development</h3>
+                <div class="skills-grid">
+                    
+                    <div class="skill-node"><h3>🎨</h3><p>UI/UX (Figma)</p></div>
+                    <div class="skill-node"><h3>📄</h3><p>HTML</p></div>
+                    <div class="skill-node"><h3>📜</h3><p> JavaScript</p></div>
+                </div>
+            </div>
+
+            <div class="skill-category">
+                <h3 class="category-title">Backend Development</h3>
+                <div class="skills-grid">
+                    <div class="skill-node"><h3>🟢</h3><p>Node.js</p></div>
+                    <div class="skill-node"><h3>🐘</h3><p>PHP Development</p></div>
+                </div>
+            </div>
+
+            
+
+            <div class="skill-category">
+                <h3 class="category-title">Programming & Others</h3>
+                <div class="skills-grid">
+                    <div class="skill-node"><h3>📜</h3><p>JavaScript</p></div>
+                    <div class="skill-node"><h3>🐍</h3><p>Python</p></div>
+                    <div class="skill-node"><h3>⚙️</h3><p>Git / GitHub</p></div>
+                    <div class="skill-node"><h3>☁️</h3><p>Netlify</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="projects">
+        <h2 class="section-title">Recent Projects</h2>
+        <div class="project-grid">
+            <div class="project-card">
+                <span class="project-category">Full Stack</span>
+                <h3>Grocery E-Commerce</h3>
+                <p>A complete online shopping experience built during my internship at iStudio Technologies. Features a full UI/UX design and a seamless user journey.</p>
+                <div class="tech-tags">
+                    <span class="tag">HTML/CSS</span>
+                    <span class="tag">PHP</span>
+                    <span class="tag">JavaScript</span>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <span class="project-category">Design</span>
+                <h3>Personal Portfolio</h3>
+                <p>My modern, dark-mode inspired digital portfolio deployed on Netlify, showcasing my BCA journey and technical expertise.</p>
+                <div class="tech-tags">
+                    <span class="tag">HTML5</span>
+                    <span class="tag">CSS3</span>
+                    <span class="tag">JavaScript</span>
+                    
+                </div>
+            </div>
+
+            <div class="project-card">
+                <span class="project-category">Mobile</span>
+                <h3>Glam Street</h3>
+                <p>A full-scale e-commerce UI project with optimized user experience and responsive design.Designed for daily shopping needs.</p>
+                <div class="tech-tags">
+                    <span class="tag">Figma</span>
+                    <span class="tag">UI/UX</span>
+                    <span class="tag"> Research</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="certs">
+        <h2 class="section-title">Certifications</h2>
+        <div class="cert-timeline">
+            <div class="cert-card">
+                <h4 style="color: var(--accent-color);">iStudio Technologies, Pune</h4>
+                <h3>UI/UX Design Internship</h3>
+                <p>Completed intensive training in user-centric design principles and e-commerce project management.</p>
+                <a href="assets/uiux.pdf" target="_blank" class="view-cert-btn">View Certificate</a>
+            </div>
+            <div class="cert-card">
+                <h4 style="color: var(--accent-color);">FSD Online Course</h4>
+                <h3>Full Stack Development</h3>
+                <p>30-day comprehensive certificate covering the MERN stack development cycle.</p>
+                <a href="assets/fsd.pdf" target="_blank" class="view-cert-btn">View Certificate</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <div class="contact-box">
+            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Let's Work Together</h2>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Currently open to internships and junior developer roles.</p>
+            <a href="mailto:contact@hani.dev" style="font-size: 1.5rem; color: var(--accent-color); font-weight: 800; text-decoration: none;">contact@hani.dev</a>
+        </div>
+    </section>
+
+    <script>
+        // Cursor
+        const cursor = document.getElementById('cursor');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        document.querySelectorAll('a, .project-card, .skill-node').forEach(item => {
+            item.addEventListener('mouseenter', () => cursor.style.transform = 'scale(1.5)');
+            item.addEventListener('mouseleave', () => cursor.style.transform = 'scale(1.5)');
+        });
+
+        // Intersection Observer for Animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('section').forEach(section => {
+            observer.observe(section);
+        });
+        // --- PARTICLE SYSTEM ---
+const canvas = document.getElementById('particleCanvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+
+function initCanvas() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+}
+
+class Particle {
+    constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2 + 1;
+        this.speedX = Math.random() * 0.5 - 0.25;
+        this.speedY = Math.random() * 0.5 - 0.25;
+        this.opacity = Math.random() * 0.5;
+    }
+    update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+    }
+    draw() {
+        ctx.fillStyle = `rgba(99, 102, 241, ${this.opacity})`;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function createParticles() {
+    for (let i = 0; i < 80; i++) {
+        particles.push(new Particle());
+    }
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+        p.update();
+        p.draw();
+    });
+    requestAnimationFrame(animateParticles);
+}
+
+window.addEventListener('resize', initCanvas);
+initCanvas();
+createParticles();
+animateParticles();
+
+
+
+
+    </script>
+</body>
+</html>
